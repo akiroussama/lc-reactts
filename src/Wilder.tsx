@@ -3,7 +3,8 @@ import { Skill } from './Skill';
 import './Wilder.css';
 import Proptypes from "prop-types";
 import styledComponents from 'styled-components';
-import { IWilder } from './interfaces';
+import { ISkill, IWilder } from './interfaces';
+import { useEffect, useState } from 'react';
 
 const Card = styledComponents.article<{}>`
     padding: 20px;
@@ -23,6 +24,10 @@ interface IProps extends IWilder {
     
 }
 
+const objA = { name: 'toto' };
+//const objB = {...objA};
+const objB = JSON.parse(JSON.stringify(objA));
+
 /**
 export function Wilder(props: IProps) {
     const city = props.city;
@@ -36,14 +41,10 @@ export function Wilder({ city, name, skills, _id }: IProps): JSX.Element {
             <h3>{name} from {city}</h3>
             <p>{_id}</p>
             <h4>Wild Skills</h4>
-            <button>Supprimer</button>
             <ul className="skills">
-                <Skill
-                    title={12 as any}
-                    votes={13} />
                 {skills.map((skill, index) => <Skill
                     key={index}
-                    title={12 as any}
+                    title={skill.title}
                     votes={skill.votes} />)}
             </ul>
         </Card>
