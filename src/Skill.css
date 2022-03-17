@@ -1,0 +1,8 @@
+.card .skills li {
+  margin: 4px 0;
+  display: flex;
+  justify-content: space-around;
+  border: #f76c6c 1px solid;
+  border-radius: 4px;
+  padding: 2px;
+}
