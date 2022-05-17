@@ -6,20 +6,7 @@ import { useEffect } from 'react';
 import { Form } from './Form';
 import { IWilder } from './interfaces';
 import { useQuery, gql } from "@apollo/client";
-
-
-const ALL_WILDERS = gql`
-  query GetAllWilders {
-    getAllWilders {
-      name
-      city
-      skills {
-        title
-        votes
-      }
-    }
-  }
-`;
+import { ALL_WILDERS } from "./gql/queries/getAllWilders";
 
 function App(): JSX.Element {
   // Hooks → commencent use...
