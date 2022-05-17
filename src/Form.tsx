@@ -1,6 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
 import { ISkill } from "./interfaces";
+import { CREATE_WILDER } from "./gql/queries/createWilders";
+import { ALL_WILDERS } from "./gql/queries/getAllWilders";
+import { gql, useMutation } from "@apollo/client";
 
 interface IProps {
     onWilderCreated: () => void;
@@ -17,6 +19,9 @@ export function Form(props: IProps): JSX.Element {
     const [name, setName] = useState<string>('');
     const [city, setCity] = useState<string>('');
     const [skills, setSkills] = useState<ISkill[]>([]);
+    const [createWilder, { data }] = useMutation(CREATE_WILDER,{
+  refetchQueries: [ALL_WILDERS]
+  });
 
     const addSkill = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
         // nécessaire pour éviter l'envoie du formulaire
@@ -46,8 +51,13 @@ export function Form(props: IProps): JSX.Element {
 
             console.log("Wilder to create: ", data);
 
-            const result = await axios.post('http://localhost:4000/api/wilders', data);
-            console.log(result.data);
+           createWilder({
+				variables: {
+					name,
+					city,
+					skills,
+				},
+			});
 
             setName('');
             setCity('');
@@ -65,6 +75,7 @@ export function Form(props: IProps): JSX.Element {
 
     return (
         <form onSubmit={submitForm}>
+             {data && <p>wilder { data.createWilder.name } a été ajouté.e</p>}
             <label htmlFor='name'>Name</label>
             <input type="text" name="name" onChange={(event) => setName(event.target.value)} value={name} />
             <label htmlFor='city'>City</label>
