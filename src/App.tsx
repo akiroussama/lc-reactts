@@ -25,7 +25,7 @@ function App(): JSX.Element {
       <header>
         <Container>
           <h1>Wilders Book</h1>
-          <button onClick={() => data}>Update</button>
+          {/* <button onClick={() => data}>Update</button> */}
         </Container>
       </header>
       <Container>
