@@ -1,11 +1,24 @@
 import './App.css';
 import { Container } from './components/Container';
 import { Wilder } from './Wilder';
-import axios from 'axios';
 import { useState } from 'react';
-import { useEffect } from 'react';
 import { Form } from './Form';
 import { IWilder } from './interfaces';
+import { useQuery, gql } from "@apollo/client";
+
+
+const ALL_WILDERS = gql`
+  query GetAllWilders {
+    getAllWilders {
+      name
+      city
+      skills {
+        title
+        votes
+      }
+    }
+  }
+`;
 
 function App(): JSX.Element {
   // Hooks → commencent use...
@@ -16,52 +29,36 @@ function App(): JSX.Element {
   const [showForm, setShowForm] = useState<boolean>(false);
 
   // Variables qui définissent des FONCTIONS
-  const getWilders = async () => {
-    try {
-      // envoyer une requête HTTP à l'API
-      const { data } = await axios.get('http://127.0.0.1:4000/api/wilders');
-      setWilders(data);
-    } catch {
-      setHasError(true);
-    }
-  };
 
-  useEffect(() => {
-    getWilders();
-    // return () => {};
-  }, []);
-
-  useEffect(() => {
-    console.log("Got update");
-  }, [wilders]);
 
   // Return JSX
+  const { loading, error, data } = useQuery(ALL_WILDERS);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
   return (
     <div>
       <header>
         <Container>
           <h1>Wilders Book</h1>
-          <button onClick={() => getWilders()}>Update</button>
+          <button onClick={() => data}>Update</button>
         </Container>
       </header>
       <Container>
         <h2>Formulaire de création de Wilder</h2>
         <button onClick={() => setShowForm(!showForm)}>Toggle Form</button>
-        {showForm === true && <Form onWilderCreated={() => getWilders()} ></Form>}
+        {showForm === true && <Form onWilderCreated={() => data} ></Form>}
         <h2>Wilders</h2>
         <section className="card-row">
-          {
-            wilders.map((wilder, index) =>
+            {data.getAllWilders.map((wilder: any) => (
               <Wilder
-                key={wilder._id}
+                key={wilder.name}
                 // donne moi toutes les props de wilder
                 //{...wilder} // strictement équivalente aux 3 lignes en dessous
                 name={wilder.name}
                 city={wilder.city}
                 skills={wilder.skills}
                 _id={wilder._id}
-              />)
-          }
+              /> ))}
         </section>
       </Container>
       <footer>
