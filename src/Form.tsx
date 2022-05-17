@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 import { ISkill } from "./interfaces";
-
+import { useMutation } from '@apollo/client';
+import { CREATE_WILDER } from './gql/createWilder';
+import { ALL_WILDERS } from './gql/getAllWilders';
 interface IProps {
     onWilderCreated: () => void;
     onError?: () => void;
@@ -17,6 +19,13 @@ export function Form(props: IProps): JSX.Element {
     const [name, setName] = useState<string>('');
     const [city, setCity] = useState<string>('');
     const [skills, setSkills] = useState<ISkill[]>([]);
+
+     const [addWilder, { data, loading, error }] = useMutation(CREATE_WILDER,{
+         refetchQueries: [{ query: ALL_WILDERS }],
+     });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
 
     const addSkill = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
         // nécessaire pour éviter l'envoie du formulaire
@@ -44,10 +53,7 @@ export function Form(props: IProps): JSX.Element {
                 skills: skills
             };
 
-            console.log("Wilder to create: ", data);
-
-            const result = await axios.post('http://localhost:4000/api/wilders', data);
-            console.log(result.data);
+            addWilder({ variables: { name, city, skills, } });
 
             setName('');
             setCity('');
